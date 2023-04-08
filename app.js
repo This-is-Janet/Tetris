@@ -8,7 +8,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let timerID;
     let score = 0;
     const colors = [
-        'orange', 'red', 'purple', 'green', 'blue'
+        '#d8e2dc', '#f2cc8f', '#ffcad4', '#f4acb7', '#9d8189'
     ]
 
     //add class to border
@@ -97,8 +97,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     document.addEventListener('keyup', control);
 
-    //move down every second
-    //timerID = setInterval(moveDown, 1000);
 
     //move down function
     function moveDown() {
@@ -124,8 +122,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-
-
     //move left and stop at the edge//
     function moveLeft() {
         undraw();
@@ -149,6 +145,23 @@ document.addEventListener('DOMContentLoaded', () => {
         draw();
     }
 
+    //Check if rotate on the edge
+    const checkRotatedPosition = (P) => {
+        P=P||currentPotition
+        if ((P+1) % tRow <4) { //move from left to right
+            if (currentTetro.some(index => squares[currentPotition + index].classList.contains('left_border'))){
+                currentPotition ++;
+                checkRotatedPosition(P);
+            }
+        } else if (P % tRow > 5) {
+            if (currentTetro.some(index => squares[currentPotition + index].classList.contains('right_border'))) {
+                currentPotition--; //move from right to left
+                checkRotatedPosition(P);
+            }
+        }
+    }
+
+
     //rotate the tetromino//
     function rotate() {
         undraw();
@@ -157,19 +170,14 @@ document.addEventListener('DOMContentLoaded', () => {
             currentRotation = 0
         }
         currentTetro = theTetrominos[random][currentRotation];
-
-        if(currentTetro.some(index => squares[currentPotition + index].classList.contains('right_border')) && 
-        currentTetro.some(index => squares[currentPotition + index].classList.contains('left_border'))) {
-            currentRotation--; //why can't I do this??
-        }
-        currentTetro = theTetrominos[random][currentRotation];
+        checkRotatedPosition();
         draw();
     }
 
     //show next tetromino//
     const displaySquares = document.querySelectorAll('.mini-grid div');
-    const displayWidth = 4;
-    let displayIndex = 0;
+    const displayWidth = 5;
+    let displayIndex = 6;
 
 
     //the tetrominos without rotation//
